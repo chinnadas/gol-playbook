@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: "installing java"
+    apt:
+     name: default-jdk
+     state: present
+  - name: "update and installing tomcat"
+    apt: 
+      name: tomcat8
+      state: present
+      update_cache: yes
+  - name: "start the service and enable"
+    service:
+      name: tomcat8
+      enabled: yes
+  - name: "download war file"
+    copy:
+       src: /home/ansible/playbooks/gameoflife.war
+       dest: /var/lib/tomcat8/webapps/gameoflife.war
+    notify:
+    - restart tomcat8
+  handlers:
+  - name: restart tomcat8
+    service:
+      name: tomcat8  
+      state: restarted
